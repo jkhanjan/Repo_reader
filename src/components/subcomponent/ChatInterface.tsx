@@ -11,24 +11,35 @@ export default function ChatInterface({ repoUrl, selectedFiles }: { repoUrl: str
 
   console.log(messages, 'messages')
 
-  const handleChat = async () => {
-    if (!input.trim()) return;
-    setMessages(prev => [...prev, { role: 'user', text: input }]);
-    const currentInput = input;
-    setInput('');
+const handleChat = async () => {
+  if (!input.trim()) return;
+  setMessages(prev => [...prev, { role: 'user', text: input }]);
+  const currentInput = input;
+  setInput('');
 
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ repoUrl, selectedFiles, question: currentInput, history: messages }),
-      });
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'assistant', text: data.answer }]);
-    } catch (error) {
-      console.error(error);
+  try {
+    const groqHistory = messages.map(m => ({
+      role: m.role,
+      content: m.text,
+    }));
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ repoUrl, selectedFiles, question: currentInput, history: groqHistory }),
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || 'Chat failed');
     }
-  };
+
+    const data = await response.json();
+    setMessages(prev => [...prev, { role: 'assistant', text: data.answer }]);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
     <Card className="h-full flex flex-col min-h-[600px]">
