@@ -61,7 +61,7 @@ export default function RepoSidebar({
             <CardTitle className="text-base">Files ({tree.length})</CardTitle>
           </CardHeader>
           <CardContent>
-            <ScrollArea className="h-[400px]">
+            <ScrollArea className="h-[60vh]">
               <FileList files={tree} selectedFiles={selectedFiles} onToggle={toggleFile} />
             </ScrollArea>
           </CardContent>

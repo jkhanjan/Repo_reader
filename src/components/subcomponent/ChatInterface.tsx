@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 
-export default function ChatInterface({ repoUrl, selectedFiles }: { repoUrl: string, selectedFiles: string[] }) {
+export default function ChatInterface({ repoUrl, selectedFiles, onFileDeselect }: { repoUrl: string, selectedFiles: string[], onFileDeselect: (file: string) => void; }) {
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', text: string}[]>([]);
   const [input, setInput] = useState('');
 
@@ -42,26 +42,34 @@ const handleChat = async () => {
 };
 
   return (
-    <Card className="h-full flex flex-col min-h-[600px]">
-      <CardHeader className="pb-3">
+    <Card className="h-full flex flex-col min-h-[700px] w-[57vw]">
+      <CardHeader className="pb-3"> 
         <CardTitle>Repository Chat</CardTitle>
-        {selectedFiles.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
-            {selectedFiles.map((file) => (
-              <Badge key={file} variant="secondary" className="truncate max-w-[200px]" title={file}>
-                {file.split('/').pop()}
-              </Badge>
-            ))}
-          </div>
-        )}
+        {selectedFiles.map((file) => (
+          <Badge
+            key={file}
+            variant="secondary"
+            className="truncate max-w-[200px] cursor-pointer"
+            title="Click to remove"
+            onClick={() => onFileDeselect(file)}
+          >
+            {file.split('/').pop()} ✕
+          </Badge>
+        ))}
       </CardHeader>
       
       <CardContent className="flex-grow">
-        <ScrollArea className="h-[450px] pr-4">
+        <ScrollArea className="h-[550px] pr-4">
           <div className="space-y-4">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`p-3 rounded-lg max-w-[80%] ${msg.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
+                <div
+                  className={`p-3 rounded-lg max-w-[90%] whitespace-pre-wrap ${
+                    msg.role === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  }`}
+                >
                   {msg.text}
                 </div>
               </div>

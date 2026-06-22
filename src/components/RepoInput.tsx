@@ -25,8 +25,14 @@ export default function RepoInput() {
   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
   const [isChatActive, setIsChatActive] = useState(false);
 
+  const handleFileDeselect = (fileToRemove: string) => {
+    setSelectedFiles(prev =>
+      prev.filter(file => file !== fileToRemove)
+    );
+  };
+
   return (
-    <div className={`w-full mx-auto transition-all duration-300 flex gap-6 ${isChatActive ? 'max-w-6xl' : 'max-w-2xl'}`}>
+    <div className={`w-full mx-auto transition-all duration-300 flex gap-6 ${isChatActive ? 'max-w-7xl' : 'max-w-xl'}`}>
       <div className={`flex-shrink-0 transition-all ${isChatActive ? 'w-1/3' : 'w-full'}`}>
         <RepoSidebar 
           repoUrl={repoUrl}
@@ -45,9 +51,10 @@ export default function RepoInput() {
       {/* Right Pane: Chat Interface */}
       {isChatActive && (
         <div className="w-2/3 flex-grow animate-in fade-in slide-in-from-right-4">
-          <ChatInterface 
-            repoUrl={repoUrl} 
-            selectedFiles={selectedFiles} 
+          <ChatInterface
+            repoUrl={repoUrl}
+            selectedFiles={selectedFiles}
+            onFileDeselect={handleFileDeselect}
           />
         </div>
       )}

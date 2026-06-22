@@ -80,7 +80,7 @@ export async function getKeyFileContents(
   ];
 
   const PRIORITY_EXTENSIONS = [
-    ".ts", ".tsx", ".js", ".jsx", ".py", ".go", ".rs", ".glsl"
+    ".ts", ".tsx", ".js", ".jsx", ".py", ".go", ".rs", ".glsl", ".css", ".scss" 
   ];
 
   const targets = tree.filter((f) => {
