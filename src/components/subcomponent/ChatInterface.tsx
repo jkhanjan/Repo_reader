@@ -55,7 +55,7 @@ export default function ChatInterface({ repoUrl, selectedFiles, onFileDeselect }
   };
 
   return (
-    <Card className="h-full flex flex-col min-h-[700px] w-[57vw]">
+    <Card className="h-full flex flex-col w-[57vw]">
       <CardHeader className="pb-3"> 
         <CardTitle>Repository Chat</CardTitle>
         {selectedFiles.map((file) => (
@@ -72,8 +72,8 @@ export default function ChatInterface({ repoUrl, selectedFiles, onFileDeselect }
       </CardHeader>
       
       <CardContent className="flex-grow">
-        <ScrollArea className="h-[550px] pr-4">
-          <div className="space-y-4">
+        <ScrollArea className="pr-4">
+          <div className="space-y-2">
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div

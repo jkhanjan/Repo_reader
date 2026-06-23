@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React from 'react';
 import ChatInterface from './subcomponent/ChatInterface';
 import RepoSidebar from './subcomponent/RepoSidebar';
 
@@ -18,22 +18,34 @@ type RepoMeta = {
   default_branch: string;
 };
 
-export default function RepoInput() {
-  const [repoUrl, setRepoUrl] = useState('');
-  const [repo, setRepo] = useState<RepoMeta | null>(null);
-  const [tree, setTree] = useState<TreeFile[]>([]);
-  const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
-  const [isChatActive, setIsChatActive] = useState(false);
+interface RepoInputProps {
+  isChatActive: boolean;
+  setIsChatActive: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
+export default function RepoInput({ isChatActive, setIsChatActive }: RepoInputProps) {
   const handleFileDeselect = (fileToRemove: string) => {
-    setSelectedFiles(prev =>
-      prev.filter(file => file !== fileToRemove)
-    );
+    setSelectedFiles(prev => prev.filter(file => file !== fileToRemove));
   };
 
+  // Keep internal state for data, layout state is now global
+  const [repoUrl, setRepoUrl] = React.useState('');
+  const [repo, setRepo] = React.useState<RepoMeta | null>(null);
+  const [tree, setTree] = React.useState<TreeFile[]>([]);
+  const [selectedFiles, setSelectedFiles] = React.useState<string[]>([]);
+
   return (
-    <div className={`w-full mx-auto transition-all duration-300 flex gap-6 ${isChatActive ? 'max-w-7xl' : 'max-w-xl'}`}>
-      <div className={`flex-shrink-0 transition-all ${isChatActive ? 'w-1/3' : 'w-full'}`}>
+    <div 
+      className={`w-full mx-auto transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col md:flex-row gap-6 p-6
+        bg-white/60 dark:bg-zinc-900/40 backdrop-blur-xl
+        border border-zinc-200/80 dark:border-zinc-800/50 
+        rounded-3xl shadow-2xl shadow-zinc-200/40 dark:shadow-none
+        ${isChatActive ? 'max-w-7xl' : 'max-w-xl'}`}
+    >
+      <div 
+        className={`flex-shrink-0 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col
+          ${isChatActive ? 'w-full md:w-[35%]' : 'w-full'}`}
+      >
         <RepoSidebar 
           repoUrl={repoUrl}
           setRepoUrl={setRepoUrl}
@@ -50,14 +62,14 @@ export default function RepoInput() {
 
       {/* Right Pane: Chat Interface */}
       {isChatActive && (
-        <div className="w-2/3 flex-grow animate-in fade-in slide-in-from-right-4">
-          <ChatInterface
-            repoUrl={repoUrl}
-            selectedFiles={selectedFiles}
-            onFileDeselect={handleFileDeselect}
-          />
-        </div>
-      )}
+              <div className="w-2/3 flex-grow animate-in fade-in slide-in-from-right-4 h-[85vh]">
+                <ChatInterface
+                  repoUrl={repoUrl}
+                  selectedFiles={selectedFiles}
+                  onFileDeselect={handleFileDeselect}
+                />
+              </div>
+            )}
     </div>
   );
 }
