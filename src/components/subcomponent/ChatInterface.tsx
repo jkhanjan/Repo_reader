@@ -4,42 +4,55 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { Loader2 } from 'lucide-react';
+import ReactMarkdown from "react-markdown";
 
 export default function ChatInterface({ repoUrl, selectedFiles, onFileDeselect }: { repoUrl: string, selectedFiles: string[], onFileDeselect: (file: string) => void; }) {
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', text: string}[]>([]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const handleChat = async () => {
+    if (!input.trim() || isLoading) return;
 
-  console.log(messages, 'messages')
+    setMessages(prev => [...prev, { role: 'user', text: input }]);
+    const currentInput = input;
+    setInput('');
+    setIsLoading(true);
 
-const handleChat = async () => {
-  if (!input.trim()) return;
-  setMessages(prev => [...prev, { role: 'user', text: input }]);
-  const currentInput = input;
-  setInput('');
+    try {
+      const groqHistory = messages.map(m => ({
+        role: m.role,
+        content: m.text,
+      }));
 
-  try {
-    const groqHistory = messages.map(m => ({
-      role: m.role,
-      content: m.text,
-    }));
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          repoUrl,
+          selectedFiles,
+          question: currentInput,
+          history: groqHistory,
+        }),
+      });
 
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ repoUrl, selectedFiles, question: currentInput, history: groqHistory }),
-    });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Chat failed');
+      }
 
-    if (!response.ok) {
-      const err = await response.json();
-      throw new Error(err.error || 'Chat failed');
+      const data = await response.json();
+
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', text: data.answer }
+      ]);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
     }
-
-    const data = await response.json();
-    setMessages(prev => [...prev, { role: 'assistant', text: data.answer }]);
-  } catch (error) {
-    console.error(error);
-  }
-};
+  };
 
   return (
     <Card className="h-full flex flex-col min-h-[700px] w-[57vw]">
@@ -70,10 +83,20 @@ const handleChat = async () => {
                       : 'bg-muted'
                   }`}
                 >
+                <ReactMarkdown >
                   {msg.text}
+                </ReactMarkdown >
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-muted p-3 rounded-lg flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Thinking...</span>
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
       </CardContent>
