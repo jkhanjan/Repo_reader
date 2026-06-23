@@ -28,7 +28,6 @@ export default function RepoInput({ isChatActive, setIsChatActive }: RepoInputPr
     setSelectedFiles(prev => prev.filter(file => file !== fileToRemove));
   };
 
-  // Keep internal state for data, layout state is now global
   const [repoUrl, setRepoUrl] = React.useState('');
   const [repo, setRepo] = React.useState<RepoMeta | null>(null);
   const [tree, setTree] = React.useState<TreeFile[]>([]);
@@ -60,7 +59,6 @@ export default function RepoInput({ isChatActive, setIsChatActive }: RepoInputPr
         />
       </div>
 
-      {/* Right Pane: Chat Interface */}
       {isChatActive && (
               <div className="w-2/3 flex-grow animate-in fade-in slide-in-from-right-4 h-[85vh]">
                 <ChatInterface
