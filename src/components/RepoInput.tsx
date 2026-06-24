@@ -60,7 +60,7 @@ export default function RepoInput({ isChatActive, setIsChatActive }: RepoInputPr
       </div>
 
       {isChatActive && (
-              <div className="w-2/3 flex-grow animate-in fade-in slide-in-from-right-4 h-[85vh]">
+              <div className="w-2/3 flex-grow animate-in fade-in slide-in-from-right-4 h-[calc(100vh-100px)]">
                 <ChatInterface
                   repoUrl={repoUrl}
                   selectedFiles={selectedFiles}
