@@ -62,7 +62,6 @@ export async function getFileContent(
   if (!response.ok) return "";
 
   const data = await response.json();
-  console.log(data)
   return Buffer.from(data.content, "base64").toString("utf-8");
 }
 
