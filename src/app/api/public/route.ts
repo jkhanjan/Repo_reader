@@ -40,7 +40,7 @@ export async function POST(req: Request) {
             techStack: repo.techStack,
             architecture: repo.architecture,
             features: repo.features,
-            deepLink: `https://repo-reader.vercel.app/?repo=${encodeURIComponent(repoUrl)}`,
+            deepLink: `https://repo-reader-gules.vercel.app/?repo=${encodeURIComponent(repoUrl)}`,
         });
     } catch (err) {
         console.error("[analyze-repo] failed:", err);
