@@ -57,7 +57,7 @@ export default function RepoSidebar({
           placeholder="https://github.com/user/repo"
           onKeyDown={(e) => e.key === 'Enter' && handleAnalyze()}
         />
-        <Button onClick={handleAnalyze} disabled={loading || !repoUrl.trim()}>
+        <Button onClick={() => handleAnalyze()} disabled={loading || !repoUrl.trim()}>
           {loading ? 'Analyzing...' : 'Analyze'}
         </Button>
       </div>
