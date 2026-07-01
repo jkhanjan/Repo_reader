@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { FileList } from './FileList';
+import { useState, useEffect, useRef } from 'react';
 
 export default function RepoSidebar({ 
   repoUrl, setRepoUrl, repo, setRepo, tree, setTree, 
@@ -11,20 +11,22 @@ export default function RepoSidebar({
 }: any) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const hasAutoAnalyzed = useRef(false);
 
-  const handleAnalyze = async () => {
-    if (!repoUrl.trim()) return;
+  const handleAnalyze = async (urlOverride?: string) => {
+    const targetUrl = urlOverride ?? repoUrl;
+    if (!targetUrl.trim()) return;
     try {
       setLoading(true);
       setError(null);
       const response = await fetch('/api/load', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ repoUrl }),
+        body: JSON.stringify({ repoUrl: targetUrl }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Failed to load repo');
-      
+
       setRepo(data.repo);
       setTree(data.tree);
       setSelectedFiles([]);
@@ -34,6 +36,13 @@ export default function RepoSidebar({
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (repoUrl.trim() && !hasAutoAnalyzed.current) {
+      hasAutoAnalyzed.current = true;
+      handleAnalyze(repoUrl);
+    }
+  }, [repoUrl]);
 
   const toggleFile = (path: string) => {
     setSelectedFiles((prev: string[]) => prev.includes(path) ? prev.filter((p) => p !== path) : [...prev, path]);

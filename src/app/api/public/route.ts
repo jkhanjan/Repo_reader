@@ -32,7 +32,8 @@ export async function POST(req: Request) {
     }
 
     try {
-        const repo = await analyzeRepo(repoUrl);
+        const cleanUrl = repoUrl.trim().replace(/\.git$/, '');
+        const repo = await analyzeRepo(cleanUrl);
 
         return NextResponse.json({
             success: true,

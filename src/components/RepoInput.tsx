@@ -3,6 +3,8 @@
 import React from 'react';
 import ChatInterface from './subcomponent/ChatInterface';
 import RepoSidebar from './subcomponent/RepoSidebar';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 type TreeFile = {
   path: string;
@@ -24,15 +26,26 @@ interface RepoInputProps {
 }
 
 export default function RepoInput({ isChatActive, setIsChatActive }: RepoInputProps) {
-  const handleFileDeselect = (fileToRemove: string) => {
-    setSelectedFiles(prev => prev.filter(file => file !== fileToRemove));
-  };
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const [repoUrl, setRepoUrl] = React.useState('');
+  const [repoUrl, setRepoUrl] = React.useState(() => {
+    return searchParams.get('repo') ?? '';
+  });
   const [repo, setRepo] = React.useState<RepoMeta | null>(null);
   const [tree, setTree] = React.useState<TreeFile[]>([]);
   const [selectedFiles, setSelectedFiles] = React.useState<string[]>([]);
 
+  React.useEffect(() => {
+    if (searchParams.get('repo')) {
+      router.replace(pathname);
+    }
+  }, [])
+
+  const handleFileDeselect = (fileToRemove: string) => {
+    setSelectedFiles(prev => prev.filter(file => file !== fileToRemove));
+  };
   return (
     <div 
       className={`w-full mx-auto transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col md:flex-row gap-6 p-6

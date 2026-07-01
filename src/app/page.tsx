@@ -1,5 +1,5 @@
 'use client'
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import RepoInput from "@/components/RepoInput";
 
 export default function Home() {
@@ -10,17 +10,15 @@ export default function Home() {
   return (
     <div 
       className={`flex flex-col min-h-screen items-center font-sans p-6 transition-all duration-700 ease-in-out
-        ${isChatActive ? 'pt-6' : 'pt-[15vh]'}`} // Smoothly shifts layout from center to top
+        ${isChatActive ? 'pt-6' : 'pt-[15vh]'}`}
       style={{
         backgroundImage: gridPattern,
         backgroundSize: '20px 20px',
       }}
     >
-      {/* Container holding both header and input */}
       <div className={`flex flex-col items-center w-full max-w-7xl transition-all duration-700 
         ${isChatActive ? 'gap-2' : 'gap-1'}`}>
         
-        {/* Header Section: Fades out and collapses height smoothly */}
         <div className={`text-center transition-all duration-500 ease-in-out overflow-hidden
           ${isChatActive ? 'opacity-0 max-h-0 scale-95 pointer-events-none' : 'opacity-100 max-h-40 scale-100 mb-4'}`}>
           <h1 className="text-5xl font-bold tracking-tight text-zinc-950 dark:text-zinc-50 mb-4">
@@ -31,9 +29,10 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Interactive Input/Chat Wrapper */}
         <div className="w-full flex justify-center">
-          <RepoInput isChatActive={isChatActive} setIsChatActive={setIsChatActive} />
+          <Suspense fallback={null}>
+            <RepoInput isChatActive={isChatActive} setIsChatActive={setIsChatActive} />
+          </Suspense>
         </div>
       </div>
     </div>
