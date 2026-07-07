@@ -2,15 +2,30 @@ import { loadRepo } from "@/agents/review-agent";
 import { getKeyFileContents } from "@/tools/github";
 import { callGroq } from "@/tools/groq";
 
-const SYSTEM_PROMPT = `You are a senior software engineer analyzing a GitHub repository.
-You will be given the repo's metadata and key file contents.
-Respond with ONLY valid JSON, no markdown fences, no preamble, in this exact shape:
+  const SYSTEM_PROMPT = `You are a Staff Software Engineer reviewing a GitHub repository.
+
+You will receive repository metadata and selected file contents. Analyze the project as an experienced engineer performing a code review.
+
+Your goal is to understand what the project does, how it is structured, and which technologies it uses—not to summarize individual files.
+
+Infer the application's purpose, architecture, implemented features, and key technologies from the provided code. Prioritize source code and configuration over documentation.
+
+Only include information supported by the repository. Do not invent technologies, databases, authentication systems, cloud providers, or features. If evidence is insufficient, omit the information rather than guessing.
+
+Return ONLY valid JSON in this exact format:
+
 {
-  "summary": "4-5 sentence plain-English summary of what this project does in crisp way",
-  "techStack": ["list", "of", "key", "technologies"],
-  "architecture": "2-3 sentence description of the overall architecture/structure",
-  "features": ["list", "of", "notable", "features"]
-}`;
+  "summary": "...",
+  "techStack": [],
+  "architecture": "...",
+  "features": []
+}
+
+Requirements:
+- Summary: 4–5 concise sentences explaining what the project does and its primary workflow.
+- techStack: Only technologies evidenced by the codebase, ordered by importance.
+- architecture: 2–4 sentences describing the application's structure, major components, and data flow.
+- features: Concrete implemented capabilities only. Avoid generic or marketing language.`;
 
 function buildAnalysisPrompt(
   repo: { full_name: string; description: string | null; language: string | null },
