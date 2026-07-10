@@ -8,7 +8,7 @@
     }
 
     let tree;
-    try {
+    try { 
       tree = await getRepoTree(state.repoUrl);
     } catch (error) {
       console.error("Failed to fetch repo tree", error);
