@@ -58,8 +58,17 @@ export async function analyzeRepo(repoUrl: string) {
   };
 
   try {
-    analysis = JSON.parse(raw ?? "");
-  } catch {
+    const cleaned = (raw ?? "")
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```\s*$/i, "")
+      .trim();
+
+    analysis = JSON.parse(cleaned);
+  } catch (err: any) {
+    console.error("[analyzeRepo] JSON parse failed. Raw response:", raw);
+    console.error("[analyzeRepo] Parse error:", err.message);
+
     analysis = {
       summary: "Could not generate summary for this repository.",
       techStack: repo.language ? [repo.language] : [],
