@@ -1,7 +1,6 @@
 # Repo Reader
 
 A GitHub repository analysis service built with Next.js, TypeScript, and LangGraph. It runs a self-expanding agentic loop over a repo's contents — pulling in more files only when the model decides it doesn't have enough context yet — rather than a fixed-depth crawl. Works standalone as its own UI, and as the analysis backend for a separate chat platform via deep links.
-
 ---
 
 ## What it does
