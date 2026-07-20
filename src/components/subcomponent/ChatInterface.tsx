@@ -65,6 +65,7 @@ export default function ChatInterface({
         }),
       });
 
+      console.log(response, 'response')
       if (!response.ok) {
         const err = await response.json();
         throw new Error(err.error || "Chat failed");
